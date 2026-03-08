@@ -33,10 +33,12 @@ public:
 private:
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     using ComboAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+    using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
 
     void configureSlider(juce::Slider& slider);
     void configureLabel(juce::Label& label, const juce::String& text);
     void configureCombo(juce::ComboBox& box);
+    void configureToggle(juce::ToggleButton& button);
 
     ErhcetuaAudioProcessor& audioProcessor;
     ErhcetuaVisualizer visualizer;
@@ -46,6 +48,7 @@ private:
     juce::ComboBox resetModeBox;
     juce::ComboBox scaleBox;
     juce::ComboBox ruleBox;
+    juce::ToggleButton legatoButton;
     juce::Label presetLabel;
     juce::Label grammarLabel;
     juce::Label resetModeLabel;
@@ -87,6 +90,7 @@ private:
     std::unique_ptr<ComboAttachment> resetModeAttachment;
     std::unique_ptr<ComboAttachment> scaleAttachment;
     std::unique_ptr<ComboAttachment> ruleAttachment;
+    std::unique_ptr<ButtonAttachment> legatoAttachment;
     std::unique_ptr<SliderAttachment> densityAttachment;
     std::unique_ptr<SliderAttachment> mutationAttachment;
     std::unique_ptr<SliderAttachment> ratchetAttachment;

@@ -3,12 +3,13 @@
 
 namespace
 {
-const std::array<const char*, 19> parameterIDs {
+const std::array<const char*, 20> parameterIDs {
     "preset",
     "grammar",
     "resetMode",
     "ruleSet",
     "scale",
+    "legato",
     "density",
     "mutation",
     "ratchet",
@@ -156,6 +157,7 @@ void ErhcetuaAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce
         const auto midiChannel = juce::jlimit(1, 16, getRoundedParameter("channel"));
         const auto gate = juce::jlimit(0.08f, 0.95f, getFloatParameter("gate"));
         const auto gateSkew = juce::jlimit(0.0f, 1.0f, getFloatParameter("gateSkew"));
+        const auto legato = getFloatParameter("legato") > 0.5f;
 
         for (auto cycle = firstCycle; cycle <= lastCycle; ++cycle)
         {
@@ -197,7 +199,7 @@ void ErhcetuaAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce
                         const auto repeatLength = laneStep.repeats > 1
                                                     ? stepLength * (laneStep.flutter ? 0.42 : 0.72) / static_cast<double>(laneStep.repeats)
                                                     : stepLength;
-                        const auto noteOffPpq = onsetPpq + repeatLength * repeatGate;
+                        const auto noteOffPpq = onsetPpq + repeatLength * (legato ? 0.98 : repeatGate);
                         pendingNoteOffs.push_back({ noteOffPpq, laneStep.note, midiChannel });
                     }
                 }
@@ -278,6 +280,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ErhcetuaAudioProcessor::crea
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>("resetMode", "Reset Mode", ErhcetuaRhythmEngine::resetModes(), 0));
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>("ruleSet", "Rule Set", ErhcetuaRhythmEngine::ruleSets(), 0));
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", ErhcetuaRhythmEngine::scales(), 1));
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>("legato", "Legato", false));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("density", "Density", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.52f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("mutation", "Mutation", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.48f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("ratchet", "Ratchet", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.22f));

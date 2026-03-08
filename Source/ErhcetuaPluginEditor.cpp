@@ -289,6 +289,7 @@ ErhcetuaAudioProcessorEditor::ErhcetuaAudioProcessorEditor(ErhcetuaAudioProcesso
     configureLabel(resetModeLabel, "Reset");
     configureLabel(scaleLabel, "Scale");
     configureLabel(ruleLabel, "Rules");
+    configureToggle(legatoButton);
 
     configureSlider(densitySlider);
     configureSlider(mutationSlider);
@@ -327,6 +328,7 @@ ErhcetuaAudioProcessorEditor::ErhcetuaAudioProcessorEditor(ErhcetuaAudioProcesso
     resetModeAttachment = std::make_unique<ComboAttachment>(audioProcessor.apvts, "resetMode", resetModeBox);
     scaleAttachment = std::make_unique<ComboAttachment>(audioProcessor.apvts, "scale", scaleBox);
     ruleAttachment = std::make_unique<ComboAttachment>(audioProcessor.apvts, "ruleSet", ruleBox);
+    legatoAttachment = std::make_unique<ButtonAttachment>(audioProcessor.apvts, "legato", legatoButton);
     densityAttachment = std::make_unique<SliderAttachment>(audioProcessor.apvts, "density", densitySlider);
     mutationAttachment = std::make_unique<SliderAttachment>(audioProcessor.apvts, "mutation", mutationSlider);
     ratchetAttachment = std::make_unique<SliderAttachment>(audioProcessor.apvts, "ratchet", ratchetSlider);
@@ -402,7 +404,8 @@ void ErhcetuaAudioProcessorEditor::resized()
     placeTopCombo(scaleArea, scaleLabel, scaleBox);
     railContent.removeFromLeft(gap);
 
-    placeTopCombo(railContent.withWidth(ruleWidth), ruleLabel, ruleBox);
+    auto ruleArea = railContent.removeFromLeft(ruleWidth);
+    placeTopCombo(ruleArea, ruleLabel, ruleBox);
 
     auto layoutControlGroup = [](juce::Rectangle<int> bounds,
                                  std::initializer_list<std::pair<juce::Label*, juce::Slider*>> controlsToPlace)
@@ -418,8 +421,11 @@ void ErhcetuaAudioProcessorEditor::resized()
         }
     };
 
-    auto macroGroup = controls.removeFromTop((controls.getHeight() - 10) / 2);
-    controls.removeFromTop(10);
+    auto legatoArea = controls.removeFromBottom(34).reduced(10, 4);
+    controls.removeFromBottom(6);
+
+    auto macroGroup = controls.removeFromTop((controls.getHeight() - 8) / 2);
+    controls.removeFromTop(8);
     auto utilityGroup = controls;
 
     layoutControlGroup(macroGroup,
@@ -443,6 +449,8 @@ void ErhcetuaAudioProcessorEditor::resized()
                            { &channelLabel, &channelSlider },
                            { &gateLabel, &gateSlider }
                        });
+
+    legatoButton.setBounds(legatoArea.removeFromLeft(96));
 }
 
 void ErhcetuaAudioProcessorEditor::configureSlider(juce::Slider& slider)
@@ -474,4 +482,15 @@ void ErhcetuaAudioProcessorEditor::configureCombo(juce::ComboBox& box)
     box.setColour(juce::ComboBox::textColourId, textBright);
     box.setColour(juce::ComboBox::arrowColourId, accent);
     addAndMakeVisible(box);
+}
+
+void ErhcetuaAudioProcessorEditor::configureToggle(juce::ToggleButton& button)
+{
+    button.setButtonText("Legato");
+    button.setClickingTogglesState(true);
+    button.setColour(juce::ToggleButton::textColourId, textDim);
+    button.setColour(juce::ToggleButton::tickColourId, accent);
+    button.setColour(juce::ToggleButton::tickDisabledColourId, juce::Colours::transparentBlack);
+    button.setToggleState(false, juce::dontSendNotification);
+    addAndMakeVisible(button);
 }
