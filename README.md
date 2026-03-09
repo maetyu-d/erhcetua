@@ -1,5 +1,7 @@
 # erhcetua
 
+![](https://github.com/maetyu-d/erhcetua/blob/main/Screenshot%202026-03-09%20at%2016.14.42.png)
+
 `erhcetua` is a JUCE MIDI FX plugin for Logic Pro focused on reset-driven generative grammar, lane mutation, and Autechre-inspired rhythm generation.
 
 ## Features
